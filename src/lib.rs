@@ -51,9 +51,6 @@ pub async fn init<F, T>(
             let mut responder = responder.clone();
             process_block(chain_tip, &rpc, true, &callback, &mut responder).await;
         }
-
-        let mut responder = responder.clone();
-        process_past_blocks(&rpc, synced_up_to_block + 1, callback, &mut responder).await;
     }
 }
 
