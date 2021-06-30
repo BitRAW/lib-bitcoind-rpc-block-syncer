@@ -1,0 +1,125 @@
+use crate::connect::stubborn_calls as sc;
+use bitcoincore_rpc::bitcoin::BlockHash;
+use bitcoincore_rpc::{Client, RpcApi};
+use connect::connections;
+use connect::settings::Settings;
+use log::{debug, info};
+use std::fmt::Debug;
+use std::sync::Arc;
+use std::thread;
+use std::time::Duration;
+use tokio::sync::mpsc::Sender;
+
+mod connect;
+mod tests;
+
+// set starting_height to 0 if you don't want to sync historic blocks
+pub async fn init<F, T>(
+    config_file_path: &str,
+    starting_height: u64,
+    callback: F,
+    responder: Sender<T>,
+) where
+    F: Fn(BlockHash, u64, bool, Arc<Client>) -> T + Send + Sync + 'static + Copy,
+    T: Send + 'static + Debug,
+{
+    let mut chain_pointer = starting_height;
+    let settings = Settings::new(config_file_path);
+    let rpc = connections::init_bitcoin_rpc_client(&settings.bitcoindrpc);
+
+    if chain_pointer != 0 {
+        let mut responder = responder.clone();
+        chain_pointer = process_past_blocks(&rpc, chain_pointer, callback, &mut responder).await;
+    }
+
+    info!("Synced up to blockchain tip! [Block #{}]", chain_pointer);
+
+    // Polling new blocks over RPC
+    info!(
+        "Start polling blocks with a frequency of {} milliseconds",
+        settings.bitcoindrpc.polling_frequency_millis
+    );
+    loop {
+        let synced_up_to_block = rpc.get_block_count().unwrap();
+        thread::sleep(Duration::from_millis(
+            settings.bitcoindrpc.polling_frequency_millis,
+        ));
+
+        if sc::get_block_count(&rpc) > chain_pointer {
+            chain_pointer += 1;
+            let mut responder = responder.clone();
+            process_block(chain_pointer, &rpc, true, &callback, &mut responder).await;
+        }
+
+        let mut responder = responder.clone();
+        process_past_blocks(&rpc, synced_up_to_block + 1, callback, &mut responder).await;
+    }
+}
+
+async fn process_past_blocks<F, T>(
+    rpc: &Arc<Client>,
+    mut starting_height: u64,
+    cb: F,
+    responder: &mut Sender<T>,
+) -> u64
+where
+    F: Fn(BlockHash, u64, bool, Arc<Client>) -> T + Send + Sync + 'static + Copy,
+    T: Debug,
+{
+    let mut chain_height = 0;
+
+    while chain_height != sc::get_block_count(&rpc) {
+        chain_height = sc::get_block_count(&rpc);
+
+        if starting_height <= chain_height {
+            info!(
+                "Requesting blocks {} to {} from bitcoind RPC interface",
+                starting_height, chain_height
+            );
+
+            process_block_range(starting_height, chain_height, rpc, cb, responder).await;
+            starting_height = chain_height;
+        }
+    }
+
+    chain_height
+}
+
+async fn process_block_range<F, T>(
+    from_height: u64,
+    to_height: u64,
+    rpc: &Arc<Client>,
+    cb: F,
+    responder: &mut Sender<T>,
+) where
+    F: Fn(BlockHash, u64, bool, Arc<Client>) -> T + Send + Sync + 'static,
+    T: Debug,
+{
+    for chain_pointer in from_height..=to_height {
+        process_block(chain_pointer, rpc, false, &cb, responder).await;
+
+        if chain_pointer % 10_000 == 0 {
+            info!("Synced up to block {}", chain_pointer);
+        }
+    }
+}
+
+async fn process_block<F, T>(
+    chain_pointer: u64,
+    rpc: &Arc<Client>,
+    streamed: bool,
+    cb: &F,
+    responder: &mut Sender<T>,
+) where
+    F: Fn(BlockHash, u64, bool, Arc<Client>) -> T + Send + Sync + 'static,
+    T: Debug,
+{
+    debug!("Processing block {}", chain_pointer);
+
+    let block_hash = sc::get_block_hash(&rpc, chain_pointer);
+
+    responder
+        .send(cb(block_hash, chain_pointer, streamed, rpc.clone()))
+        .await
+        .unwrap();
+}

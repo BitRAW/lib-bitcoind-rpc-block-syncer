@@ -1,0 +1,26 @@
+[package]
+name = "lib-bitcoind-accessor"
+version = "0.2.0"
+authors = ["Gabriel Comte <gabriel.comte@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bitcoincore-rpc = { git = "https://github.com/gcomte/rust-bitcoincore-rpc" }
+
+tokio = { version =  "1.7.1", features = ["full"] }
+serde = { version = "1.0.126", features = ["derive"] }
+futures = "0.3"
+config = "0.11.0"
+log = "0.4.14"
+stream-cancel = "0.8.1"
+hex = "0.4.3"
+env_logger = "0.8.4"
+
+[dev-dependencies]
+# unit tests
+chrono = "0.4.19"
+
+# used for integration tests
+serde_json = "1.0.64"

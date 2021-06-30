@@ -1,0 +1,22 @@
+Version History
+===
+### 0.2.0
+* Purge all usage of ZMQ interface
+* Purge all GitHub history by moving code to a new repository
+* Update dependencies: tokio 1.6.1 -> 1.7.1, stream-cancel 0.8.0 -> 0.8.1, env_logger 0.8.3 -> 0.8.4
+
+### 0.1.16
+* Change flag no-zmq to --no-zmq
+* Update tokio from 1.6.0 to 1.6.1
+
+### 0.1.15
+* Fix double syncing of blocks when circumventing ZMQ
+
+### 0.1.14
+* Minor fix: Also do historic sync if only one historic block is left to sync
+
+### 0.1.13
+* Fix use of arguments introduced with 0.1.12
+
+### 0.1.12
+* Add temporary possibility to poll new blocks instead of using ZMQ (use arg "no-zmq")

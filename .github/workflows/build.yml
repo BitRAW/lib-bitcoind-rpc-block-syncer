@@ -1,0 +1,24 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build --verbose
+    - name: Run quick tests
+      run: BTC_RPC_URL=${{ secrets.BTC_RPC_URL }} BTC_RPC_PORT=8332 BTC_RPC_USER=${{ secrets.BTC_RPC_USER }} BTC_RPC_PASS=${{ secrets.BTC_RPC_PASS }} BTC_RPC_POLLING=10000 BTC_RPC_REVIVAL=10000 RUST_LOG=info cargo test --verbose --release -- --nocapture
+    - name: Run expensive tests
+      run: BTC_RPC_URL=${{ secrets.BTC_RPC_URL }} BTC_RPC_PORT=8332 BTC_RPC_USER=${{ secrets.BTC_RPC_USER }} BTC_RPC_PASS=${{ secrets.BTC_RPC_PASS }} BTC_RPC_POLLING=10000 BTC_RPC_REVIVAL=10000 RUST_LOG=info cargo test --verbose --release -- --ignored --nocapture

@@ -1,0 +1,8 @@
+[bitcoind-rpc]
+url = "http://our-full-no.de"
+port = 8332
+user = "bitcoin-rpc"
+pass = "passw0rd"
+
+polling-frequency-millis = 10000
+con-revival-interval-millis = 10000
