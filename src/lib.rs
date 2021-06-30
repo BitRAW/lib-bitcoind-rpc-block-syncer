@@ -23,16 +23,16 @@ pub async fn init<F, T>(
     F: Fn(BlockHash, u64, bool, Arc<Client>) -> T + Send + Sync + 'static + Copy,
     T: Send + 'static + Debug,
 {
-    let mut chain_pointer = starting_height;
+    let mut chain_tip = starting_height;
     let settings = Settings::new(config_file_path);
     let rpc = connections::init_bitcoin_rpc_client(&settings.bitcoindrpc);
 
-    if chain_pointer != 0 {
+    if chain_tip != 0 {
         let mut responder = responder.clone();
-        chain_pointer = process_past_blocks(&rpc, chain_pointer, callback, &mut responder).await;
+        chain_tip = process_past_blocks(&rpc, chain_tip, callback, &mut responder).await;
     }
 
-    info!("Synced up to blockchain tip! [Block #{}]", chain_pointer);
+    info!("Synced up to blockchain tip! [Block #{}]", chain_tip);
 
     // Polling new blocks over RPC
     info!(
@@ -45,10 +45,10 @@ pub async fn init<F, T>(
             settings.bitcoindrpc.polling_frequency_millis,
         ));
 
-        if sc::get_block_count(&rpc) > chain_pointer {
-            chain_pointer += 1;
+        if sc::get_block_count(&rpc) > chain_tip {
+            chain_tip += 1;
             let mut responder = responder.clone();
-            process_block(chain_pointer, &rpc, true, &callback, &mut responder).await;
+            process_block(chain_tip, &rpc, true, &callback, &mut responder).await;
         }
 
         let mut responder = responder.clone();
