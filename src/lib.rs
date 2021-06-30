@@ -1,6 +1,6 @@
 use crate::connect::stubborn_calls as sc;
 use bitcoincore_rpc::bitcoin::BlockHash;
-use bitcoincore_rpc::{Client, RpcApi};
+use bitcoincore_rpc::Client;
 use connect::connections;
 use connect::settings::Settings;
 use log::{debug, info};
@@ -40,7 +40,6 @@ pub async fn init<F, T>(
         settings.bitcoindrpc.polling_frequency_millis
     );
     loop {
-        let synced_up_to_block = rpc.get_block_count().unwrap();
         thread::sleep(Duration::from_millis(
             settings.bitcoindrpc.polling_frequency_millis,
         ));
