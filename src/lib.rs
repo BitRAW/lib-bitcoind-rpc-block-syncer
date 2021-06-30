@@ -27,7 +27,9 @@ pub async fn init<F, T>(
     let settings = Settings::new(config_file_path);
     let rpc = connections::init_bitcoin_rpc_client(&settings.bitcoindrpc);
 
-    if chain_tip != 0 {
+    if chain_tip == 0 {
+        chain_tip = sc::get_block_count(&rpc);
+    } else {
         let mut responder = responder.clone();
         chain_tip = process_past_blocks(&rpc, chain_tip, callback, &mut responder).await;
     }
