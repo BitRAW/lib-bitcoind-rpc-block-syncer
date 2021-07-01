@@ -32,9 +32,9 @@ pub async fn init<F, T>(
     } else {
         let mut responder = responder.clone();
         chain_tip = process_past_blocks(&rpc, chain_tip, callback, &mut responder).await;
-    }
 
-    info!("Synced up to blockchain tip! [Block #{}]", chain_tip);
+        info!("Synced up to blockchain tip! [Block #{}]", chain_tip);
+    }
 
     // Polling new blocks over RPC
     info!(
