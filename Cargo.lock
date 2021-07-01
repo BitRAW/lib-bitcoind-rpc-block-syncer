@@ -256,7 +256,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "lib-bitcoind-accessor"
+name = "lib-bitcoind-rpc-block-syncer"
 version = "0.2.1"
 dependencies = [
  "bitcoincore-rpc",
