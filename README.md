@@ -1,4 +1,4 @@
-# lib-bitcoind-accessor
+# lib-bitcoind-rpc-block-syncer
 This library is responsible for the communication with `bitcoind` over the RPC interface.  
 It opens connections, syncs through past blocks and listens to new ones (once all past blocks are synced).
 
