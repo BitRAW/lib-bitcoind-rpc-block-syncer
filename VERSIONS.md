@@ -1,5 +1,10 @@
 Version History
 ===
+### 0.2.1
+* Fix errors that arised from purging ZMQ
+* Fix feature "only sync non-historic blocks"
+* Minor improvements
+
 ### 0.2.0
 * Purge all usage of ZMQ interface
 * Purge all GitHub history by moving code to a new repository
