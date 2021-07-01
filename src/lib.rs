@@ -6,9 +6,9 @@ use connect::settings::Settings;
 use log::{debug, info};
 use std::fmt::Debug;
 use std::sync::Arc;
-use std::thread;
 use std::time::Duration;
 use tokio::sync::mpsc::Sender;
+use tokio::time::sleep;
 
 mod connect;
 mod tests;
@@ -42,9 +42,10 @@ pub async fn init<F, T>(
         settings.bitcoindrpc.polling_frequency_millis
     );
     loop {
-        thread::sleep(Duration::from_millis(
+        sleep(Duration::from_millis(
             settings.bitcoindrpc.polling_frequency_millis,
-        ));
+        ))
+        .await;
 
         if sc::get_block_count(&rpc) > chain_tip {
             chain_tip += 1;
