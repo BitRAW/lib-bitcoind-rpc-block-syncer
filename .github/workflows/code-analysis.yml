@@ -1,5 +1,5 @@
 on: [push, pull_request]
-name: Static code analysis
+name: Static Code Analysis
 jobs:
   code_analysis:
     runs-on: ubuntu-latest
