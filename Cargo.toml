@@ -9,7 +9,7 @@ edition = "2018"
 [dependencies]
 bitcoincore-rpc = { git = "https://github.com/gcomte/rust-bitcoincore-rpc" }
 
-tokio = { version =  "1.7.1", features = ["full", "time"] }
+tokio = { version =  "1.8.0", features = ["full", "time"] }
 serde = { version = "1.0.126", features = ["derive"] }
 config = "0.11.0"
 log = "0.4.14"
