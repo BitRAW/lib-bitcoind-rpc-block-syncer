@@ -1,5 +1,13 @@
 Version History
 ===
+### 0.2.2
+
+* Fix syncing (double entries of blocks)
+* Complete the renaming of the library
+* Fix README
+  * Add shields to README
+* Update tokio 1.7.1 to 1.8.0
+
 ### 0.2.1
 * Fix errors that arised from purging ZMQ
 * Fix feature "only sync non-historic blocks"
