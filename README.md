@@ -1,6 +1,11 @@
-# lib-bitcoind-accessor
+# lib-bitcoind-rpc-block-syncer
 This library is responsible for the communication with `bitcoind` over the RPC interface.  
 It opens connections, syncs through past blocks and listens to new ones (once all past blocks are synced).
+
+[![Build and Test](https://github.com/BitRAW/lib-bitcoind-rpc-block-syncer/actions/workflows/build.yml/badge.svg)](https://github.com/BitRAW/lib-bitcoind-rpc-block-syncer/actions/workflows/build.yml)
+[![Static Code Analysis](https://github.com/BitRAW/lib-bitcoind-rpc-block-syncer/actions/workflows/code-analysis.yml/badge.svg)](https://github.com/BitRAW/lib-bitcoind-rpc-block-syncer/actions/workflows/code-analysis.yml)
+[![License](https://img.shields.io/github/license/BitRAW/lib-bitcoind-rpc-block-syncer)](https://github.com/BitRAW/lib-bitcoind-rpc-block-syncer/blob/master/LICENSE)
+[![Developer](https://img.shields.io/badge/Developer-BitRAW-41819A)](https://bitraw.io)
 
 ### How to use the library
 ```rust

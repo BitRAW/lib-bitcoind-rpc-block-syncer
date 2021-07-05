@@ -1,7 +1,7 @@
 use crate::internal::mempool_space;
 use bitcoincore_rpc::bitcoin::BlockHash;
 use bitcoincore_rpc::Client;
-use lib_bitcoind_accessor::init;
+use lib_bitcoind_rpc_block_syncer::init;
 use std::fmt::Debug;
 use std::sync::Arc;
 use tokio::sync::mpsc::Sender;

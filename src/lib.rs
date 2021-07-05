@@ -77,7 +77,7 @@ where
             );
 
             process_block_range(starting_height, chain_height, rpc, cb, responder).await;
-            starting_height = chain_height;
+            starting_height = chain_height + 1;
         }
     }
 
