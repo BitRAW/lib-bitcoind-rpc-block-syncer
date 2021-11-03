@@ -10,7 +10,7 @@ pub fn init_bitcoin_rpc_client(settings: &BitcoindRpc) -> Arc<Client> {
 
     loop {
         match Client::new(
-            url.clone(),
+            &url,
             Auth::UserPass(settings.user.to_string(), settings.pass.to_string()),
         ) {
             Ok(client) => {
