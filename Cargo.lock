@@ -214,7 +214,7 @@ dependencies = [
 
 [[package]]
 name = "lib-bitcoind-rpc-block-syncer"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "bitcoincore-rpc",
  "config",

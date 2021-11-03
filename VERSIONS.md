@@ -1,5 +1,17 @@
 Version History
 ===
+### 0.2.3
+
+* Upgrade to Rust edition 2021
+* Fix clippy warning (reference immediately dereferenced)
+* Run GitHub workflow 'Build and Test' on all branches
+* Update dependencies:
+  * env_logger 0.8.4 to 0.9.0
+  * serde 1.0.126 to 1.0.130
+  * serde_json from 1.0.64 to 1.0.68
+  * tokio 1.8.1 to 1.13.0
+  * Rebased bitcoincore-rpc to latest commits
+
 ### 0.2.2
 
 * Fix syncing (double entries of blocks)
