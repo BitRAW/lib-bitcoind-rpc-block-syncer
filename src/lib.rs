@@ -28,7 +28,7 @@ pub async fn init<F, T>(
     let rpc = connections::init_bitcoin_rpc_client(&settings.bitcoindrpc);
 
     if chain_tip == 0 {
-        chain_tip = sc::get_block_count(&rpc);
+        chain_tip = sc::get_block_count(&*rpc);
     } else {
         let mut responder = responder.clone();
         chain_tip = process_past_blocks(&rpc, chain_tip, callback, &mut responder).await;
@@ -47,7 +47,7 @@ pub async fn init<F, T>(
         ))
         .await;
 
-        if sc::get_block_count(&rpc) > chain_tip {
+        if sc::get_block_count(&*rpc) > chain_tip {
             chain_tip += 1;
             let mut responder = responder.clone();
             process_block(chain_tip, &rpc, true, &callback, &mut responder).await;
@@ -67,8 +67,8 @@ where
 {
     let mut chain_height = 0;
 
-    while chain_height != sc::get_block_count(&rpc) {
-        chain_height = sc::get_block_count(&rpc);
+    while chain_height != sc::get_block_count(&*rpc) {
+        chain_height = sc::get_block_count(&*rpc);
 
         if starting_height <= chain_height {
             info!(
@@ -115,7 +115,7 @@ async fn process_block<F, T>(
 {
     debug!("Processing block {}", chain_pointer);
 
-    let block_hash = sc::get_block_hash(&rpc, chain_pointer);
+    let block_hash = sc::get_block_hash(&*rpc, chain_pointer);
 
     responder
         .send(cb(block_hash, chain_pointer, streamed, rpc.clone()))
