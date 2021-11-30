@@ -73,7 +73,7 @@ dependencies = [
 [[package]]
 name = "bitcoincore-rpc"
 version = "0.14.0"
-source = "git+https://github.com/gcomte/rust-bitcoincore-rpc#9fc141ec1b30758afa52d173358a6c6c6ba830d5"
+source = "git+https://github.com/gcomte/rust-bitcoincore-rpc#d83b8fe724c5df78ab0ec1e61c3d786155d447ac"
 dependencies = [
  "bitcoincore-rpc-json",
  "jsonrpc",
@@ -85,7 +85,7 @@ dependencies = [
 [[package]]
 name = "bitcoincore-rpc-json"
 version = "0.14.0"
-source = "git+https://github.com/gcomte/rust-bitcoincore-rpc#9fc141ec1b30758afa52d173358a6c6c6ba830d5"
+source = "git+https://github.com/gcomte/rust-bitcoincore-rpc#d83b8fe724c5df78ab0ec1e61c3d786155d447ac"
 dependencies = [
  "bitcoin",
  "serde 1.0.130",
