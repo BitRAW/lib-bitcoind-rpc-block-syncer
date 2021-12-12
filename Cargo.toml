@@ -1,6 +1,6 @@
 [package]
 name = "lib-bitcoind-rpc-block-syncer"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["Gabriel Comte <gabriel.comte@gmail.com>"]
 edition = "2021"
 rust-version = "1.57.0"

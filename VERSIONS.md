@@ -1,5 +1,16 @@
 Version History
 ===
+### 0.2.4
+
+* Define used rust version in Cargo.toml
+* GitHub Actions
+  * Split up into mulitple jobs
+  * Always make sure the newest Rust version is being installed
+* Update dependencies:
+  * serde_json from 1.0.68 to 1.0.72
+  * tokio 1.13.0 to 1.14.0
+  * Rebased bitcoincore-rpc to latest commits
+
 ### 0.2.3
 
 * Upgrade to Rust edition 2021
