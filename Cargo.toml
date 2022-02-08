@@ -11,7 +11,7 @@ rust-version = "1.58.0"
 bitcoincore-rpc = { git = "https://github.com/gcomte/rust-bitcoincore-rpc" }
 
 tokio = { version =  "1.16.1", features = ["full", "time"] }
-serde = { version = "1.0.133", features = ["derive"] }
+serde = { version = "1.0.136", features = ["derive"] }
 config = "0.11.0"
 log = "0.4.14"
 env_logger = "0.9.0"
