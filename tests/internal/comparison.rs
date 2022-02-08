@@ -1,25 +1,19 @@
+use crate::internal::bitcoin_cli;
 use crate::internal::block_data::BlockData;
-use crate::internal::mempool_space;
-use std::thread;
-use std::time::Duration;
 
 pub fn compare_block(rpc_data: BlockData, streamed: bool) {
-    // wait for mempool.space to catch up
-    thread::sleep(Duration::from_secs(10));
-
-    let mut mempool_space_data = mempool_space::get_block(rpc_data.block_hash);
-    mempool_space_data.streamed = Some(streamed);
-
-    assert_eq!(rpc_data, mempool_space_data);
+    assert_eq!(rpc_data, bitcoin_cli::get_block(&rpc_data.block_hash));
 
     if streamed {
-        // check that we're on the same height as mempool.space, allowing for small variance
-        let mempool_space_chain_height = mempool_space::get_chain_height();
-        assert!(rpc_data.block_height <= mempool_space_chain_height + 1);
-        assert!(rpc_data.block_height >= mempool_space_chain_height - 1);
+        // check that the block has the same height as the bitcoin-cli defines as the current tip of the entire blockchain
+        assert!(rpc_data.block_height == bitcoin_cli::get_chain_height());
     }
 }
 
-pub fn verify_block_is_streamed(rpc_data: BlockData) {
+pub fn verify_block_is_streamed(rpc_data: &BlockData) {
     assert!(rpc_data.streamed.unwrap());
+}
+
+pub fn verify_block_is_not_streamed(rpc_data: &BlockData) {
+    assert_eq!(rpc_data.streamed.unwrap(), false);
 }

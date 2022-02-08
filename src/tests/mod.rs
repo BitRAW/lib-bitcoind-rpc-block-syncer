@@ -15,8 +15,8 @@ mod tests {
         // arrange
         let _ = env_logger::try_init();
 
-        let from_height = 400_000;
-        let to_height = 400_005;
+        let from_height = 400;
+        let to_height = 405;
 
         let settings = Settings::new(CONFIG_FILE);
         let rpc = connections::init_bitcoin_rpc_client(&settings.bitcoindrpc);

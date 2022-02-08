@@ -1,4 +1,4 @@
-use crate::internal::mempool_space;
+use crate::internal::bitcoin_cli;
 use bitcoincore_rpc::bitcoin::BlockHash;
 use bitcoincore_rpc::Client;
 use lib_bitcoind_rpc_block_syncer::init;
@@ -34,6 +34,6 @@ impl BitcoindInterface {
 }
 
 fn get_chain_pointer() -> u64 {
-    let chain_height = mempool_space::get_chain_height();
+    let chain_height = bitcoin_cli::get_chain_height();
     chain_height - (AMT_OF_HISTORIC_BLOCKS_TO_PROCESS - 1)
 }
