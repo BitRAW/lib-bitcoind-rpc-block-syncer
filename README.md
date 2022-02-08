@@ -60,7 +60,7 @@ Consequently, a tool using this library may have its own settings file, in which
 
 #### Environment Variables
 Start any tool that uses this library with the following (cusotmized) environment variables:  
-`BTC_RPC_URL=http://our-full-no.de BTC_RPC_PORT=8332 BTC_RPC_USER=bitcoin-rpc BTC_RPC_PASS=passw0rd BTC_RPC_POLLING=10000 BTC_RPC_REVIVAL=10000 RUST_LOG=info ./awesome-bitcoin-tool`
+`BTC_RPC_URL=our-full-no.de BTC_RPC_PORT=8332 BTC_RPC_USER=bitcoin-rpc BTC_RPC_PASS=passw0rd BTC_RPC_POLLING=10000 BTC_RPC_REVIVAL=10000 RUST_LOG=info ./awesome-bitcoin-tool`
 
 #### Explanation config values
 Check the Bitcoin Core installation to find out the values needed.

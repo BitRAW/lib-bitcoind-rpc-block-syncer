@@ -6,7 +6,11 @@ use std::thread;
 use std::time::Duration;
 
 pub fn init_bitcoin_rpc_client(settings: &BitcoindRpc) -> Arc<Client> {
-    let url = format!("{}:{}", settings.url, settings.port);
+    let url = format!(
+        "http://{}:{}",
+        settings.url.replace("http://", ""),
+        settings.port
+    );
 
     loop {
         match Client::new(

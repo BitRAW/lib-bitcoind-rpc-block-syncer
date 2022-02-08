@@ -4,8 +4,8 @@ use crate::internal::bitcoind_interface::BitcoindInterface;
 use crate::internal::comparison;
 
 use crate::internal::block_data::BlockData;
-use bitcoincore_rpc::bitcoin::{BlockHash, Network};
-use bitcoincore_rpc::{Client, RpcApi};
+use bitcoincore_rpc::bitcoin::BlockHash;
+use bitcoincore_rpc::Client;
 use std::sync::Arc;
 use tokio::sync::mpsc;
 
@@ -15,7 +15,7 @@ const AMT_OF_STREAMED_BLOCKS_TO_PROCESS: u8 = 3;
 
 #[tokio::test(flavor = "multi_thread")]
 #[ignore]
-async fn compare_results_to_mempool_space() {
+async fn compare_results() {
     // arrange
     let _ = env_logger::try_init();
     let amt_of_blocks = AMT_OF_HISTORIC_BLOCKS_TO_PROCESS + AMT_OF_STREAMED_BLOCKS_TO_PROCESS;
@@ -29,14 +29,14 @@ async fn compare_results_to_mempool_space() {
         let block_data = rx.recv().await.unwrap();
         let block_should_be_streamed = block_count >= AMT_OF_HISTORIC_BLOCKS_TO_PROCESS;
 
-        // compares hash, height, difficulty and weather block was streamed or not
+        // compares hash, height, difficulty and whether block was streamed or not
         comparison::compare_block(block_data, block_should_be_streamed);
     }
 }
 
 #[tokio::test(flavor = "multi_thread")]
 #[ignore]
-async fn compare_results_to_mempool_space_historic_blocks_only() {
+async fn compare_results_to_bitcoin_cli_historic_blocks_only() {
     // arrange
     let _ = env_logger::try_init();
     let (tx, mut rx) = mpsc::channel::<BlockData>(1);
@@ -48,7 +48,7 @@ async fn compare_results_to_mempool_space_historic_blocks_only() {
     for _ in 0..AMT_OF_HISTORIC_BLOCKS_TO_PROCESS {
         let block_data = rx.recv().await.unwrap();
 
-        // compares hash, height, difficulty and weather block was streamed or not
+        // compares hash, height, difficulty and whether block was streamed or not
         comparison::compare_block(block_data, false);
     }
 }
@@ -72,19 +72,13 @@ fn process_incoming_block(
     block_hash: BlockHash,
     block_height: u64,
     streamed: bool,
-    rpc: Arc<Client>,
+    _: Arc<Client>,
 ) -> BlockData {
-    // test if rpc interface works
-    let difficulty = rpc
-        .get_block_header(&block_hash)
-        .unwrap()
-        .difficulty(Network::Bitcoin);
-
     let streamed = Some(streamed);
     BlockData {
         block_hash,
         block_height,
-        difficulty,
         streamed,
+        time: None,
     }
 }

@@ -1,18 +1,14 @@
 use bitcoincore_rpc::bitcoin::BlockHash;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Eq, PartialEq, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct BlockData {
-    // on mempool.space the hash is called id, not block_hash
-    // --> https://mempool.space/api/block/000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce
-    #[serde(rename(deserialize = "id"), rename(deserialize = "block_hash"))]
+    #[serde(rename(deserialize = "hash"), rename(deserialize = "block_hash"))]
     pub block_hash: BlockHash,
-    // on mempool.space the hash is called height, not block_height
-    // --> https://mempool.space/api/block/000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce
     #[serde(rename(deserialize = "height"), rename(deserialize = "block_height"))]
     pub block_height: u64,
-    pub difficulty: u64,
     pub streamed: Option<bool>,
+    pub time: Option<u64>,
 }
 
 impl BlockData {
@@ -20,3 +16,12 @@ impl BlockData {
         serde_json::from_str::<Self>(json).unwrap()
     }
 }
+
+impl PartialEq for BlockData {
+    fn eq(&self, other: &Self) -> bool {
+        self.block_hash.eq(&other.block_hash)
+            && self.block_height == other.block_height
+            && self.streamed.eq(&other.streamed)
+    }
+}
+impl Eq for BlockData {}

@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
+  BITCOIN_VERSION: "22.0"
 
 jobs:
   build:
@@ -17,7 +18,34 @@ jobs:
         toolchain: stable
     - name: Build
       run: cargo build --verbose
+    - name: Download Bitcoin Core
+      run: wget -q https://bitcoincore.org/bin/bitcoin-core-$BITCOIN_VERSION/bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz
+    - name: Unpack Bitcoin Core
+      run: tar -xzvf bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz
+    - name: Install Bitcoin Core binaries
+      run: |
+        sudo install -m 0755 -o runner -g runner -t /usr/local/bin bitcoin-22.0/bin/*
+    - name: Display Bitcoin Core info
+      run: |
+        which bitcoind
+        bitcoind --version
+    - name: Setup regtest & Run tests
+      run: ./tests/setup_regtest.sh &
+      env:
+        DATA_DIR: /tmp/lib-bitcoind-rpc-block-syncer_bitcoind-data-dir
+        RPC_SERVER: ${{ secrets.BTC_RPC_URL }}
+        RPC_PORT: ${{ secrets.BTC_RPC_PORT }}
+        RPC_USER: ${{ secrets.BTC_RPC_USER}}
+        RPC_PASS: ${{ secrets.BTC_RPC_PASS }}
+    - name: Replace bitcoin-cli by prepared script for regtest
+      run: |
+        mv /usr/local/bin/bitcoin-cli /usr/local/bin/bitcoin-cli-bin
+
+        echo -e '#!/bin/bash\n\n bitcoin-cli-bin -rpcconnect=${{ secrets.BTC_RPC_URL }} -rpcport=${{ secrets.BTC_RPC_PORT }} -rpcuser=${{ secrets.BTC_RPC_USER}} -rpcpassword=${{ secrets.BTC_RPC_PASS }} $@' > /usr/local/bin/bitcoin-cli
+
+        sudo chmod +x /usr/local/bin/bitcoin-cli
+        sudo chown runner:runner /usr/local/bin/bitcoin-cli
     - name: Run quick tests
-      run: BTC_RPC_URL=${{ secrets.BTC_RPC_URL }} BTC_RPC_PORT=8332 BTC_RPC_USER=${{ secrets.BTC_RPC_USER }} BTC_RPC_PASS=${{ secrets.BTC_RPC_PASS }} BTC_RPC_POLLING=500 BTC_RPC_REVIVAL=500 RUST_LOG=info cargo test --verbose --release -- --nocapture
+      run: BTC_RPC_URL=${{ secrets.BTC_RPC_URL }} BTC_RPC_PORT=${{ secrets.BTC_RPC_PORT }} BTC_RPC_USER=${{ secrets.BTC_RPC_USER }} BTC_RPC_PASS=${{ secrets.BTC_RPC_PASS }} BTC_RPC_POLLING=500 BTC_RPC_REVIVAL=500 RUST_LOG=info cargo test --verbose --release -- --nocapture
     - name: Run expensive tests
-      run: BTC_RPC_URL=${{ secrets.BTC_RPC_URL }} BTC_RPC_PORT=8332 BTC_RPC_USER=${{ secrets.BTC_RPC_USER }} BTC_RPC_PASS=${{ secrets.BTC_RPC_PASS }} BTC_RPC_POLLING=500 BTC_RPC_REVIVAL=500 RUST_LOG=info cargo test --verbose --release -- --ignored --nocapture
+      run: BTC_RPC_URL=${{ secrets.BTC_RPC_URL }} BTC_RPC_PORT=${{ secrets.BTC_RPC_PORT }} BTC_RPC_USER=${{ secrets.BTC_RPC_USER }} BTC_RPC_PASS=${{ secrets.BTC_RPC_PASS }} BTC_RPC_POLLING=500 BTC_RPC_REVIVAL=500 RUST_LOG=info cargo test --verbose --release -- --ignored --nocapture
