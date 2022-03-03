@@ -39,11 +39,11 @@ impl Settings {
     }
 
     fn load_settings(config_file_path: &str) -> Result<Self, ConfigError> {
-        let mut s = Config::new();
+        let s = Config::builder()
+            .add_source(File::with_name(config_file_path).required(false))
+            .add_source(Environment::with_prefix("BTC").separator("_"))
+            .build()?;
 
-        s.merge(File::with_name(config_file_path).required(false))?;
-        s.merge(Environment::with_prefix("BTC").separator("_"))?;
-
-        s.try_into()
+        s.try_deserialize()
     }
 }
